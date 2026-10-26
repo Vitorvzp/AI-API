@@ -1,0 +1,29 @@
+# Arquivo de configuração para o Render
+# Define os serviços necessários para a aplicação.
+
+services:
+  # Serviço de Backend (Web Service)
+  - type: web
+    name: flask-backend
+    env: python
+    # Comando de build: Instala dependências e constrói o frontend.
+    buildCommand: |
+      pip install -r requirements_clean_v2.txt
+      npm install --prefix src
+      npm run build --prefix src
+    # Comando de inicialização: Usa Gunicorn para servir a aplicação Flask.
+    startCommand: gunicorn --bind 0.0.0.0:$PORT app:app
+    # Variáveis de ambiente
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.6
+      - key: GEMINI_API_KEY
+        # O usuário DEVE definir esta variável no painel do Render.
+        sync: false
+      - key: DISCORD_WEBHOOK_URL
+        # O usuário DEVE definir esta variável no painel do Render (opcional).
+        sync: false
+    # O Render não suporta SQLite para serviços web, mas o código será modificado para usar um banco de dados em memória ou o usuário deve configurar um serviço de banco de dados externo.
+    # Por enquanto, vamos manter o SQLite para simplificar, mas alertar o usuário sobre a limitação.
+    # O Render irá criar o arquivo database.db na primeira execução, mas ele será perdido em reinicializações.
+    # Para produção, o usuário deve usar um banco de dados persistente (como PostgreSQL no Render).

@@ -1,0 +1,22 @@
+[
+  {
+    "question": "Quais são seus projetos favoritos?",
+    "answer": "Sem dúvidas, meu tipo de projeto favorito envolve automação de tarefas com Python. Desde cedo, sempre me encantei com a ideia de fazer o computador trabalhar por mim — pegar tarefas repetitivas, cansativas, e transformá-las em algo que funciona sozinho é algo que considero mágico. Gosto muito de desenvolver scripts que otimizam processos do dia a dia, como organização de arquivos, geração de relatórios e integração entre sistemas. Sempre que tenho a oportunidade de aplicar automação em algum projeto, não penso duas vezes: uso Python para entregar algo funcional, eficiente e que realmente faz diferença."
+  },
+  {
+    "question": "Qual sua experiência com Python?",
+    "answer": "Embora eu ainda não tenha uma experiência profissional formal, venho estudando Python com dedicação há mais de 5 anos. Nesse tempo, mergulhei de cabeça na linguagem e desenvolvi diversos projetos pessoais. Um dos mais complexos foi um sistema de banco de dados com mais de 300 mil usuários, acessível via API REST com requisições GET por ID. Esse sistema ainda possui integração com bots do Discord, incluindo sistema de camadas de acesso, registros de logs e autenticação. Eu sempre busco aplicar o que aprendo na prática, e isso tem me proporcionado um crescimento constante como programador."
+  },
+  {
+    "question": "Quem é você?",
+    "answer": "Prazer! Me chamo Vitor Emanuel, tenho 15 anos e sou apaixonado por tecnologia desde que me entendo por gente. Atualmente, estudo programação com foco em linguagens como Python, Lua e C#, mas minha principal especialidade é o Python. Gosto de transformar ideias em projetos e estou sempre procurando aprender mais, explorar novas possibilidades e evoluir. Meu objetivo é conseguir meu primeiro emprego na área de tecnologia em breve. Sinto que nasci pra isso: criar, programar, automatizar e impactar positivamente com o que eu sei fazer. Programar é mais que um hobby pra mim, é um sonho em construção."
+  },
+  {
+    "question": "Está procurando emprego?",
+    "answer": "Sim! Estou em busca da minha primeira oportunidade profissional na área de tecnologia. Tenho me preparado bastante, desenvolvendo projetos práticos, estudando constantemente e me aprofundando em Python, automação e desenvolvimento web. Acredito que já tenho uma boa base e estou pronto para aprender ainda mais com uma equipe de verdade. Quero muito contribuir com soluções criativas e continuar crescendo profissionalmente. Se você conhece alguma oportunidade, pode contar comigo!"
+  },
+  {
+    "question": "Quais são seus próximos objetivos de aprendizado?",
+    "answer": "Atualmente, quero me aprofundar ainda mais em Python, especialmente na parte de logs — entender boas práticas, estruturas de logging e monitoramento de sistemas. Além disso, estou muito interessado em expandir meus conhecimentos em bibliotecas voltadas para desenvolvimento web, como Flask e Django, e também em ferramentas para criação de aplicativos mobile e desktop, como Kivy, PyQt e Flutter. Meu objetivo é estar preparado para criar soluções completas, tanto no backend quanto na interface do usuário, sempre com qualidade e eficiência."
+  }
+]
