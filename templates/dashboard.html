@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Dashboard de Conversas</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #111; color: #eee; padding: 20px; }
+        .conv { background: #1e1e1e; padding: 10px; border-radius: 8px; margin-bottom: 10px; }
+        .msg { color: #6cf; white-space: pre-wrap; }
+        .ai { color: #afa; white-space: pre-wrap; }
+        .ip { font-size: 0.8em; color: #888; }
+        select, button { background: #222; color: #eee; padding: 6px; border: 1px solid #333; border-radius: 6px; }
+    </style>
+</head>
+<body>
+    <h1>Histórico de Conversas</h1>
+    <form method="get" action="{{ url_for('dashboard') }}">
+        <label for="ip">Filtrar por IP:</label>
+        <select name="ip" id="ip">
+            <option value="">Todos</option>
+            {% for ip in all_ips %}
+            <option value="{{ ip }}"{% if ip_filter == ip %} selected{% endif %}>{{ ip }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit">Filtrar</button>
+    </form>
+    <hr>
+    {% for conversation in conversations %}
+    <div class="conv">
+        <div class="ip">IP: {{ conversation.user.ip_address }}</div>
+        <div class="msg"><b>Usuário:</b> {{ conversation.user_message }}</div>
+        <div class="ai"><b>IA:</b> {{ conversation.ai_response }}</div>
+        <div class="ip">{{ conversation.created_at.strftime('%d/%m/%Y %H:%M:%S') }}</div>
+    </div>
+    {% else %}
+    <p>Nenhuma conversa encontrada.</p>
+    {% endfor %}
+</body>
+</html>
