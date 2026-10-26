@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, abort, render_template
 from flask_cors import CORS
 from google import genai
 from dotenv import load_dotenv
@@ -7,12 +7,14 @@ from models import User, Conversation
 import os, json, re, datetime, requests
 import threading
 import time
+import hmac
 
 load_dotenv()
 API_KEY = os.getenv("TOKEN")
 DISCORD_WEBHOOK_URL = os.getenv("DISCORD_WEBHOOK_URL")
 PING_URL = os.getenv("PING_URL", "http://localhost:5000/ping")
 app = Flask(__name__)
+app.config["DASHBOARD_TOKEN"] = os.getenv("DASHBOARD_TOKEN")
 CORS(app, origins=["http://localhost:3000", os.getenv("FRONTEND_URL", "*")])
 engine = create_engine("sqlite:///database.db")
 SQLModel.metadata.create_all(engine)
@@ -118,6 +120,20 @@ Mensagem recebida:
 
 @app.route("/dashboard")
 def dashboard():
+    expected_token = app.config.get("DASHBOARD_TOKEN")
+    if not expected_token or not expected_token.strip():
+        abort(404)
+    authorization = request.headers.get("Authorization", "")
+    scheme, separator, supplied_token = authorization.partition(" ")
+    if (
+        not separator
+        or scheme.lower() != "bearer"
+        or not hmac.compare_digest(
+            supplied_token.encode("utf-8"), expected_token.encode("utf-8")
+        )
+    ):
+        abort(401)
+
     ip_filter = request.args.get("ip")
     with Session(engine) as session:
         if ip_filter:
@@ -127,44 +143,28 @@ def dashboard():
         else:
             conversations = session.exec(select(Conversation)).all()
         all_ips = session.exec(select(User.ip_address)).all()
-        html = """
-        <html><head><title>Dashboard de Conversas</title>
-        <style>
-            body { font-family: Arial; background: #111; color: #eee; padding: 20px; }
-            .conv { background: #1e1e1e; padding: 10px; border-radius: 8px; margin-bottom: 10px; }
-            .msg { color: #6cf; }
-            .ai { color: #afa; }
-            .ip { font-size: 0.8em; color: #888; }
-            select, button { background: #222; color: #eee; padding: 6px; border: 1px solid #333; border-radius: 6px; }
-        </style></head><body>
-        <h1>Histórico de Conversas</h1>
-        <form method="get" action="/dashboard">
-            <label for="ip">Filtrar por IP:</label>
-            <select name="ip" id="ip">
-                <option value="">Todos</option>
-        """
-        for ip in all_ips:
-            selected = "selected" if ip_filter == ip else ""
-            html += f"<option value='{ip}' {selected}>{ip}</option>"
-        html += """
-            </select>
-            <button type="submit">Filtrar</button>
-        </form><hr>
-        """
-        if not conversations:
-            html += "<p>Nenhuma conversa encontrada.</p>"
-        else:
-            for c in conversations:
-                html += f"""
-                <div class='conv'>
-                    <div class='ip'>IP: {c.user.ip_address}</div>
-                    <div class='msg'><b>Usuário:</b> {c.user_message}</div>
-                    <div class='ai'><b>IA:</b> {c.ai_response}</div>
-                    <div class='ip'>{c.created_at.strftime('%d/%m/%Y %H:%M:%S')}</div>
-                </div>
-                """
-        html += "</body></html>"
-        return html
+        return render_template(
+            "dashboard.html",
+            conversations=conversations,
+            all_ips=all_ips,
+            ip_filter=ip_filter,
+        )
+
+
+@app.after_request
+def protect_dashboard_response(response):
+    if request.endpoint == "dashboard":
+        if response.status_code == 401:
+            response.headers["WWW-Authenticate"] = 'Bearer realm="dashboard"'
+        response.headers["Cache-Control"] = "no-store"
+        response.headers["Referrer-Policy"] = "no-referrer"
+        response.headers["X-Content-Type-Options"] = "nosniff"
+        response.headers["Content-Security-Policy"] = (
+            "default-src 'none'; style-src 'unsafe-inline'; "
+            "form-action 'self'; frame-ancestors 'none'; base-uri 'none'"
+        )
+        response.vary.add("Authorization")
+    return response
 
 @app.route("/api/faq")
 def get_faq():

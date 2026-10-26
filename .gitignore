@@ -1,2 +1,8 @@
 .env
 __pycache__
+*.pyc
+.venv/
+venv/
+database.db
+database.db-shm
+database.db-wal
